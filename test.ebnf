@@ -1,0 +1,25 @@
+expression  ::= assignment ;
+assignment  ::= ( call "." )? IDENTIFIER "=" assignment
+            | logic_or ;
+logic_or    ::= logic_and ( "||" logic_and )* ;
+logic_and   ::= equality ( "&&" equality )* ;
+equality    ::= comparison ( ( "!=" | "==" ) comparison )* ;
+comparison  ::= term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
+term        ::= factor ( ( "-" | "+" ) factor )* ;
+factor      ::= unary ( ( "/" | "*" | "%" | ""**" ) unary )* ;
+unary       ::= ( "!" | "-" | "^" | "~" ) unary | call ;
+call        ::= primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
+primary     ::= "true" | "false" | "null"
+            | NUMBER | STRING | IDENTIFIER | "(" expression ")"
+            | array | object | xml_object | "super" "." IDENTIFIER ;
+array       ::= "[" (logic_or ("," logic_or)*)? "]" ;
+object      ::= "{" (pair ("," pair)*)? "}" ;
+pair        ::= IDENTIFIER ":" logic_or ;
+xml_object  ::= "<" IDENTIFIER (attribute)* ">" (xml_object | "{" logic_or "}" | STRING) "</" IDENTIFIER ">" ;
+attribute   ::= IDENTIFIER "=" (STRING | "{" logic_or "}") ;
+
+NUMBER      ::= DIGIT+ ( "." DIGIT+ )? ;
+STRING      := "\"" <any char except "\"">* "\"" ;
+IDENTIFIER  ::= ALPHA ( ALPHA | DIGIT )* ;
+ALPHA       ::= "a" ... "z" | "A" ... "Z" | "_" ;
+DIGIT       ::= "0" ... "9" ;

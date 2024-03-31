@@ -1,0 +1,31 @@
+var test = {
+    key1: "value1",
+    key2: 3.14,
+    key3: [1, 2, 3, 4, 5],
+    key4: {
+        key5: "value2"
+    }
+}
+
+// xml as an object (syntax sugar of document.createElement)
+var p = <p id="user-name" class={classText}>test</p>;
+
+
+// set hook - do something when assigned to this variable.
+// $a is an implicit variable
+var test = "test string" with {
+    document.getElementById("test").innerText = $a;
+};
+
+test = "updated!";
+
+
+// simplified function calling
+var array = [1, 2, 3, 4, 5];
+var filteredArray = array.filter {
+    return $a > 1;   // $a is an implicit variable
+}
+
+filteredArray.forEach { element =>
+    console.log(element ** 2);
+}
