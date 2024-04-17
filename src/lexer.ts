@@ -77,19 +77,19 @@ export type Token = {
 };
 
 const KEYWORDS: Record<string, number> = {
-	'var': TOKEN_TYPE_KEYWORD_VAR,
-	'fun': TOKEN_TYPE_KEYWORD_FUN,
-	'return': TOKEN_TYPE_KEYWORD_RETURN,
-	'if': TOKEN_TYPE_KEYWORD_IF,
-	'else': TOKEN_TYPE_KEYWORD_ELSE,
-	'while': TOKEN_TYPE_KEYWORD_WHILE,
-	'for': TOKEN_TYPE_KEYWORD_FOR,
-	'break': TOKEN_TYPE_KEYWORD_BREAK,
-	'continue': TOKEN_TYPE_KEYWORD_CONTINUE,
-	'true': TOKEN_TYPE_KEYWORD_TRUE,
-	'false': TOKEN_TYPE_KEYWORD_FALSE,
-	'null': TOKEN_TYPE_KEYWORD_NULL,
-	'with': TOKEN_TYPE_KEYWORD_WITH,
+	var: TOKEN_TYPE_KEYWORD_VAR,
+	fun: TOKEN_TYPE_KEYWORD_FUN,
+	return: TOKEN_TYPE_KEYWORD_RETURN,
+	if: TOKEN_TYPE_KEYWORD_IF,
+	else: TOKEN_TYPE_KEYWORD_ELSE,
+	while: TOKEN_TYPE_KEYWORD_WHILE,
+	for: TOKEN_TYPE_KEYWORD_FOR,
+	break: TOKEN_TYPE_KEYWORD_BREAK,
+	continue: TOKEN_TYPE_KEYWORD_CONTINUE,
+	true: TOKEN_TYPE_KEYWORD_TRUE,
+	false: TOKEN_TYPE_KEYWORD_FALSE,
+	null: TOKEN_TYPE_KEYWORD_NULL,
+	with: TOKEN_TYPE_KEYWORD_WITH,
 };
 
 type ReturnType = {
@@ -97,22 +97,22 @@ type ReturnType = {
 };
 
 export default function Lexer(code: string): ReturnType {
-	const characters = code.split('');
+	const characters = code.split("");
 	let index = 0;
 	let start = 0;
 	let line = 1;
 
 	const isAtEnd = () => {
 		return index >= characters.length;
-	}
+	};
 
 	const advance = () => {
 		return characters[index++];
-	}
+	};
 
 	const peek = () => {
 		return !isAtEnd() ? characters[index] : undefined;
-	}
+	};
 
 	const match = (expected: string) => {
 		if (isAtEnd()) return false;
@@ -120,21 +120,21 @@ export default function Lexer(code: string): ReturnType {
 
 		index++;
 		return true;
-	}
+	};
 
 	const string = () => {
 		while (peek() !== '"' && !isAtEnd()) {
-			if (peek() === '\n') line++;
+			if (peek() === "\n") line++;
 			advance();
 		}
 
 		if (isAtEnd()) {
-			throw new Error('Unterminated string');
+			throw new Error("Unterminated string");
 		}
 
 		advance();
-		return  characters.slice(start + 1, index - 1).join('');
-	}
+		return characters.slice(start + 1, index - 1).join("");
+	};
 
 	const lex = (): Array<Token> => {
 		const result: Array<Token> = [];
@@ -144,87 +144,133 @@ export default function Lexer(code: string): ReturnType {
 
 			const c = advance();
 			switch (c) {
-				case '(':
+				case "(":
 					result.push({ type: TOKEN_TYPE_LEFT_PAREN, line });
 					break;
-				case ')':
+				case ")":
 					result.push({ type: TOKEN_TYPE_RIGHT_PAREN, line });
 					break;
-				case '{':
+				case "{":
 					result.push({ type: TOKEN_TYPE_LEFT_BRACE, line });
 					break;
-				case '}':
+				case "}":
 					result.push({ type: TOKEN_TYPE_RIGHT_BRACE, line });
 					break;
-				case '[':
+				case "[":
 					result.push({ type: TOKEN_TYPE_LEFT_BRACKET, line });
 					break;
-				case ']':
+				case "]":
 					result.push({ type: TOKEN_TYPE_RIGHT_BRACKET, line });
 					break;
-				case ',':
+				case ",":
 					result.push({ type: TOKEN_TYPE_COMMA, line });
 					break;
-				case '.':
+				case ".":
 					result.push({ type: TOKEN_TYPE_DOT, line });
 					break;
-				case ':':
+				case ":":
 					result.push({ type: TOKEN_TYPE_COLON, line });
 					break;
-				case ';':
+				case ";":
 					result.push({ type: TOKEN_TYPE_SEMICOLON, line });
 					break;
-				case '+':
+				case "+":
 					result.push({ type: TOKEN_TYPE_ADD_OPERATOR, line });
 					break;
-				case '-':
+				case "-":
 					result.push({ type: TOKEN_TYPE_SUB_OPERATOR, line });
 					break;
-				case '%':
+				case "%":
 					result.push({ type: TOKEN_TYPE_MOD_OPERATOR, line });
 					break;
-				case '^':
+				case "^":
 					result.push({ type: TOKEN_TYPE_BITWISE_XOR_OPERATOR, line });
 					break;
-				case '~':
+				case "~":
 					result.push({ type: TOKEN_TYPE_BITWISE_NOT_OPERATOR, line });
 					break;
-				case '*':
-					result.push({ type: match('*') ? TOKEN_TYPE_POW_OPERATOR : TOKEN_TYPE_MUL_OPERATOR, line });
+				case "*":
+					result.push({
+						type: match("*")
+							? TOKEN_TYPE_POW_OPERATOR
+							: TOKEN_TYPE_MUL_OPERATOR,
+						line,
+					});
 					break;
-				case '<':
-					result.push({ type: match('=') ? TOKEN_TYPE_LE_OPERATOR : match('<') ? TOKEN_TYPE_LEFT_SHIFT_OPERATOR : match('/') ? TOKEN_TYPE_GE_SLASH_OPERATOR : TOKEN_TYPE_LT_OPERATOR, line });
+				case "<":
+					result.push({
+						type: match("=")
+							? TOKEN_TYPE_LE_OPERATOR
+							: match("<")
+								? TOKEN_TYPE_LEFT_SHIFT_OPERATOR
+								: match("/")
+									? TOKEN_TYPE_GE_SLASH_OPERATOR
+									: TOKEN_TYPE_LT_OPERATOR,
+						line,
+					});
 					break;
-				case '>':
-					result.push({ type: match('=') ? TOKEN_TYPE_GE_OPERATOR : match('>') ? TOKEN_TYPE_RIGHT_SHIFT_OPERATOR : TOKEN_TYPE_GT_OPERATOR, line });
+				case ">":
+					result.push({
+						type: match("=")
+							? TOKEN_TYPE_GE_OPERATOR
+							: match(">")
+								? TOKEN_TYPE_RIGHT_SHIFT_OPERATOR
+								: TOKEN_TYPE_GT_OPERATOR,
+						line,
+					});
 					break;
-				case '=':
-					result.push({ type: match('=') ? TOKEN_TYPE_EQ_OPERATOR : match('>') ? TOKEN_TYPE_ARROW : TOKEN_TYPE_ASSIGN_OPERATOR, line });
+				case "=":
+					result.push({
+						type: match("=")
+							? TOKEN_TYPE_EQ_OPERATOR
+							: match(">")
+								? TOKEN_TYPE_ARROW
+								: TOKEN_TYPE_ASSIGN_OPERATOR,
+						line,
+					});
 					break;
-				case '!':
-					result.push({ type: match('=') ? TOKEN_TYPE_NE_OPERATOR : TOKEN_TYPE_NOT_OPERATOR, line });
+				case "!":
+					result.push({
+						type: match("=") ? TOKEN_TYPE_NE_OPERATOR : TOKEN_TYPE_NOT_OPERATOR,
+						line,
+					});
 					break;
-				case '&':
-					result.push({ type: match('&') ? TOKEN_TYPE_AND_OPERATOR : TOKEN_TYPE_BITWISE_AND_OPERATOR, line });
+				case "&":
+					result.push({
+						type: match("&")
+							? TOKEN_TYPE_AND_OPERATOR
+							: TOKEN_TYPE_BITWISE_AND_OPERATOR,
+						line,
+					});
 					break;
-				case '|':
-					result.push({ type: match('|') ? TOKEN_TYPE_OR_OPERATOR : TOKEN_TYPE_BITWISE_OR_OPERATOR, line });
+				case "|":
+					result.push({
+						type: match("|")
+							? TOKEN_TYPE_OR_OPERATOR
+							: TOKEN_TYPE_BITWISE_OR_OPERATOR,
+						line,
+					});
 					break;
-				case '?':
-					result.push({ type: match(':') ? TOKEN_TYPE_QUESTION_ELVIS : TOKEN_TYPE_QUESTION_MARK, line });
+				case "?":
+					result.push({
+						type: match(":")
+							? TOKEN_TYPE_QUESTION_ELVIS
+							: TOKEN_TYPE_QUESTION_MARK,
+						line,
+					});
 					break;
-				case '/':
-					if (match('/')) {
-						while (!isAtEnd() && peek() !== '\n') advance();
+				case "/":
+					if (match("/")) {
+						while (!isAtEnd() && peek() !== "\n") advance();
 					} else {
 						result.push({ type: TOKEN_TYPE_DIV_OPERATOR, line });
 					}
 					break;
-				case ' ':
-				case '\r':
-				case '\t':
+				case " ":
+				case "\r":
+				case "\t":
 					break;
-				case '\n':
+				case "\n":
 					line++;
 					break;
 
@@ -233,31 +279,55 @@ export default function Lexer(code: string): ReturnType {
 					break;
 
 				default:
-					if (c >= '0' && c <= '9') {
-						while (!isAtEnd() && characters[index] >= '0' && characters[index] <= '9') {
+					if (c >= "0" && c <= "9") {
+						while (
+							!isAtEnd() &&
+							characters[index] >= "0" &&
+							characters[index] <= "9"
+						) {
 							advance();
 						}
 
-						if (characters[index] === '.' && characters[index + 1] >= '0' && characters[index + 1] <= '9') {
+						if (
+							characters[index] === "." &&
+							characters[index + 1] >= "0" &&
+							characters[index + 1] <= "9"
+						) {
 							advance();
 
-							while (!isAtEnd() && characters[index] >= '0' && characters[index] <= '9') {
+							while (
+								!isAtEnd() &&
+								characters[index] >= "0" &&
+								characters[index] <= "9"
+							) {
 								advance();
 							}
 						}
 
-						result.push({ type: TOKEN_TYPE_NUMBER, lexeme: characters.slice(start, index).join(''), line });
-
-					} else if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c === '_') {
-						while (!isAtEnd() && (characters[index] >= 'a' && characters[index] <= 'z' || characters[index] >= 'A' && characters[index] <= 'Z' || characters[index] === '_' || characters[index] >= '0' && characters[index] <= '9')) {
+						result.push({
+							type: TOKEN_TYPE_NUMBER,
+							lexeme: characters.slice(start, index).join(""),
+							line,
+						});
+					} else if (
+						(c >= "a" && c <= "z") ||
+						(c >= "A" && c <= "Z") ||
+						c === "_"
+					) {
+						while (
+							!isAtEnd() &&
+							((characters[index] >= "a" && characters[index] <= "z") ||
+								(characters[index] >= "A" && characters[index] <= "Z") ||
+								characters[index] === "_" ||
+								(characters[index] >= "0" && characters[index] <= "9"))
+						) {
 							advance();
 						}
 
-						const lexeme = characters.slice(start, index).join('');
+						const lexeme = characters.slice(start, index).join("");
 						const type = KEYWORDS[lexeme] || TOKEN_TYPE_IDENTIFIER;
 
 						result.push({ type, lexeme, line });
-
 					} else {
 						throw new Error(`Unexpected character ${c} at line ${line}`);
 					}
@@ -267,9 +337,9 @@ export default function Lexer(code: string): ReturnType {
 		result.push({ type: TOKEN_TYPE_EOF, line });
 
 		return result;
-	}
+	};
 
 	return {
-		lex
-	}
+		lex,
+	};
 }

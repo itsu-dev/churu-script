@@ -1,3 +1,12 @@
+program     ::= statements ;
+statements  ::= statement* ;
+statement   ::= varDecl | block ;
+block       ::= "{" statement* "}"
+blockWithArguments ::= "{" ( "(" arguments ")" "=>")? statement* "}" ;
+varDecl     ::= "var" IDENTIFIER ( "=" logic_or ("with" blockWithArguments)? )? ";" ;
+
+arguments   ::= IDENTIFIER ( "," IDENTIFIER )* ;
+
 expression  ::= assignment ;
 assignment  ::= ( call "." )? IDENTIFIER "=" assignment
             | logic_or ;
@@ -6,12 +15,13 @@ logic_and   ::= equality ( "&&" equality )* ;
 equality    ::= comparison ( ( "!=" | "==" ) comparison )* ;
 comparison  ::= term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
 term        ::= factor ( ( "-" | "+" ) factor )* ;
-factor      ::= unary ( ( "/" | "*" | "%" | ""**" ) unary )* ;
-unary       ::= ( "!" | "-" | "^" | "~" ) unary | call ;
+factor      ::= unary ( ( "/" | "*" | "%" | "**" | "^" ) unary )* ;
+unary       ::= ( "!" | "-" | "~" ) unary | call ;
 call        ::= primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
 primary     ::= "true" | "false" | "null"
             | NUMBER | STRING | IDENTIFIER | "(" expression ")"
             | array | object | xml_object | "super" "." IDENTIFIER ;
+
 array       ::= "[" (logic_or ("," logic_or)*)? "]" ;
 object      ::= "{" (pair ("," pair)*)? "}" ;
 pair        ::= IDENTIFIER ":" logic_or ;
